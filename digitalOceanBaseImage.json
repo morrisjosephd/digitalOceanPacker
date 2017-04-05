@@ -1,0 +1,39 @@
+{
+  "variables": {
+    "do_api_token": "",
+    "do_public_ssh_key": "",
+    "do_username": "",
+    "do_password": ""
+  },
+
+  "builders": [
+    {
+    "type": "digitalocean",
+    "api_token": "{{user `do_api_token`}}",
+    "size": "512mb",
+    "region": "nyc3",
+    "image": "ubuntu-14-04-x64",
+    "droplet_name": "packer",
+    "ssh_username": "root",
+    "snapshot_name": "base-image-packer-{{timestamp}}"
+  },
+  {
+    "name": "null",
+    "type": "null",
+    "ssh_host": "{{user `do_ssh_host`}}",
+    "ssh_username": "root",
+    "ssh_private_key_file": "{{user `do_ssh_private_key_file`}}"
+  }
+],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "createUser.sh",
+      "environment_vars": [
+        "NEW_USER={{ user `do_username` }}",
+        "NEW_USER_PASSWORD={{ user `do_password` }}",
+        "PUBLIC_SSH_KEY={{ user `do_public_ssh_key` }}"
+      ]
+    }
+  ]
+}
