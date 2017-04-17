@@ -1,41 +1,25 @@
-#!/bin/bash  -x
+#!/bin/bash
 
-#adduser --disabled-password --gecos "" $NEW_USER
-######### Script dies here in docker
-#gpasswd -a $NEW_USER sudo
-
-## delete user for a fresh start
-sudo deluser $NEW_USER sudo
-userdel -r $NEW_USER
-rm -rf /home/$NEW_USER
-
+# Create a suer and set the password
 adduser --disabled-password --gecos "" $NEW_USER
 echo $NEW_USER:$NEW_USER_PASSWORD | chpasswd
 gpasswd -a $NEW_USER sudo
 
-
-## just do all this as root then;  chown -R $NEW_USER /home/$NEW_USER
-
+#create .ssh directory
 cd /home/$NEW_USER/
 mkdir .ssh
 chmod 700 .ssh/
+
+# Upload ssh public key
 touch .ssh/authorized_keys
 echo $PUBLIC_SSH_KEY > .ssh/authorized_keys
 chmod 600 .ssh/
 
+# set permissions on directory
 sudo chown -R $NEW_USER:$NEW_USER .
-sudo -H -u $NEW_USER bash -c 'sudo chown u+x /.ssh'
-# useradd -m -p $NEW_USER_PASSWORD -s /bin/bash $NEW_USER
-# gpasswd -a $NEW_USER sudo
+sudo -H -u $NEW_USER bash -c 'chmod u+x .ssh/'
 
-# whoami
-# sudo -u $NEW_USER
-
-# whoami
-# $USER
-
-# mkdir /home/$NEW_USER/.ssh
-# chmod 700 .ssh
-# echo $PUBLIC_SSH_KEY > /home/$NEW_USER/.ssh/authorized_keys
-
-# chmod 600 .ssh/authorized_keys
+#remove root credentials
+echo $NEW_USER_PASSWORD | sudo -S sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+echo $NEW_USER_PASSWORD | sudo -S sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+echo $NEW_USER_PASSWORD | sudo -S service ssh restart

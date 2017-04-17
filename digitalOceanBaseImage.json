@@ -8,6 +8,7 @@
 
   "builders": [
     {
+    "name": "base-image",
     "type": "digitalocean",
     "api_token": "{{user `do_api_token`}}",
     "size": "512mb",
@@ -21,11 +22,18 @@
     "name": "null",
     "type": "null",
     "ssh_host": "{{user `do_ssh_host`}}",
-    "ssh_username": "root",
+    "ssh_username": "{{user `do_username`}}",
     "ssh_private_key_file": "{{user `do_ssh_private_key_file`}}"
   }
 ],
   "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 15",
+        "apt-get update"
+      ]
+    },
     {
       "type": "shell",
       "script": "createUser.sh",
