@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Create a suer and set the password
+# Create a user and set the password
 adduser --disabled-password --gecos "" $NEW_USER
 echo $NEW_USER:$NEW_USER_PASSWORD | chpasswd
 gpasswd -a $NEW_USER sudo

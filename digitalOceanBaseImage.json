@@ -11,7 +11,7 @@
     "name": "base-image",
     "type": "digitalocean",
     "api_token": "{{user `do_api_token`}}",
-    "size": "512mb",
+    "size": "s-1vcpu-1gb",
     "region": "nyc2",
     "image": "ubuntu-16-04-x64",
     "droplet_name": "packer",
@@ -42,18 +42,6 @@
         "NEW_USER_PASSWORD={{ user `do_password` }}",
         "PUBLIC_SSH_KEY={{ user `do_public_ssh_key` }}"
       ]
-    },
-    {
-      "type": "shell",
-      "script": "installNodejs.sh"
-    },
-    {
-      "type": "shell",
-      "script": "configureFirewall.sh"
-    },
-    {
-      "type": "shell",
-      "script": "installNginx.sh"
-    }
+      }
   ]
 }
